@@ -1,6 +1,7 @@
 <?php
 
 use App\Events\SchoolTripVehicle;
+use App\Events\VehicleLocation;
 use App\Http\Controllers\BusMaintenanceController;
 use Illuminate\Notifications\Messages\MailMessage;
 use App\Models\SchoolFees;
@@ -76,6 +77,10 @@ oBUkko01QfIIG+uoAQIDAQAB
     openssl_private_decrypt(base64_decode($data), $decrypted, $private);
 
     var_dump($decrypted);
+});
+
+Route::get('update-veh',function() {
+    event(new VehicleLocation(-1.2912452792160183, 36.86530454389917, 1, 60, 50));
 });
 
 Route::get('/test-firebase', function() {

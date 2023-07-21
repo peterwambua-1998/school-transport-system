@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
+use Pusher\PushNotifications\PushNotifications;
 
 class VehicleController extends Controller
 {
@@ -381,13 +382,41 @@ class VehicleController extends Controller
                         ->orWhere('user_type', 'LIKE', 'director')
                         ->get();
 
+        $settings = Settings::find(1);
         $vehicle = Vehicle::find($request->vehicle_id);
         $driver = User::find($vehicle->driver_id);
-
         Notification::send($users, new VehicleOutOfFence($vehicle->title, $vehicle->plate_num, $driver->name));
+        $pushNotifications = new PushNotifications([
+            "instanceId" => "c880bb01-d93f-4eb8-9fd1-0a3003477735",
+            "secretKey" => "57C522657EAD4C0D6DE3D72A4368DF5F0BA256AC4B0AE610714A85CC195DB17F",
+        ]);
+        
+        foreach ($users as $key => $user) {
+            $publishResponse = $pushNotifications->publishToInterests(
+                ['transport-'.$user->id],
+                [
+                    "fcm" => [
+                        "notification" => [
+                            "title" => "Vehicle Outside Geo Fence",
+                            "body" => "$vehicle->title $vehicle->plate_num is out of zone. Driver: {$vehicle->driver->name} Phone: {$vehicle->driver->phone_num}",
+                            "icon" => asset('store/'.$settings->company_logo),
+                        ],
+                    ],
+                    "web" => [
+                        "time_to_live" => 3600,
+                        "notification" => [
+                            "title" => "Vehicle Outside Geo Fence",
+                            "body" => "$vehicle->title $vehicle->plate_num is out of zone. Driver: {$vehicle->driver->name} Phone: {$vehicle->driver->phone_num}",
+                            "icon" => asset('store/'.$settings->company_logo),
+                            "deep_link" => url('/notification/seenotify'), //url to take user when clicked the notification
+                            "hide_notification_if_site_has_focus" => true
+                        ]
+                    ]
+                ]
+            );
+        }
 
         return response('success');
-        
     }
 
 

@@ -177,7 +177,7 @@ class ParentsController extends Controller
         DB::transaction(function() use ($request, $password, $children, $user) {
 
 
-            if ($request->user_type == 'parent two') {
+            if ($request->relationship == 'father' || $request->relationship == 'mother' || $request->relationship == 'guardian') {
                 $check = User::where('user_type','=', 'parent two')->where('linked_to','=', $user->id)->first();
                 if ($check) {
                     $check->delete();
@@ -204,8 +204,8 @@ class ParentsController extends Controller
                 }
             }
 
-            if ($request->user_type == 'other') {
-                $checkOther = User::where('user_type','=', 'other')->where('linked_to','=', $user->id)->first();
+            if ($request->user_type == 'house manager') {
+                $checkOther = User::where('user_type','=','other')->where('linked_to','=',$user->id)->first();
                 if ($checkOther) {
                     $checkOther->delete();
                 }
@@ -229,7 +229,13 @@ class ParentsController extends Controller
             }
         });
 
-        return response('Check mail for password');
+        if($request->user_type == 'parent two') {
+            return response('Check mail for password');
+        }
+
+        if($request->user_type == 'other') {
+            return response('');
+        }
     }
 
 

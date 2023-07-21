@@ -150,6 +150,7 @@
   <script src="{{ asset('assets/plugins/datatables-net-bs5/dataTables.bootstrap5.js') }}"></script>
 @endpush
 @push('custom-scripts')
+<script src="https://js.pusher.com/beams/1.0/push-notifications-cdn.js"></script>
 <script src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js" ></script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDiyrRpT1Rg7EUpZCUAKTtdw3jl70UzBAU&libraries=drawing,geometry,places&v=weekly" defer></script>
 <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
@@ -363,11 +364,9 @@ function myMap() {
                 checkIfInsideGeoFence(data.lat - 0, data.lng - 0, geofence, veh_id);
                 sessionStorage.setItem('already-sent','already sent');
               }
-
             }
           }
-      });
-
+      }); 
 
       function checkIfInsideGeoFence(lat, lng, bermudaTriangle, id) {
         var status = google.maps.geometry.poly.containsLocation({lat: lat, lng:lng}, bermudaTriangle);
@@ -378,7 +377,7 @@ function myMap() {
           var dataTwo = new FormData;
           dataTwo.append('_token', '{{ csrf_token() }}');
           dataTwo.append('vehicle_id', id);
-
+          console.log('sending data');
           $.ajax({
             type: "POST",
             url: "{{ route('vehicleoutofzone') }}",
@@ -396,8 +395,22 @@ function myMap() {
         }
       }
 
+      let user_id = "{{Auth::user()->id}}";
+
+      const beamsClient = new PusherPushNotifications.Client({
+        instanceId: "c880bb01-d93f-4eb8-9fd1-0a3003477735",
+      });
+      beamsClient
+      .start()
+      .then((beamsClient) => beamsClient.getDeviceId())
+      .then((deviceId) => console.log("Successfully registered with Beams. Device ID:", deviceId))
+      .then(() => beamsClient.addDeviceInterest(`transport-${user_id}`))
+      .then(() => beamsClient.getDeviceInterests())
+      .then((interests) => console.log("Current interests:", interests))
+      .catch(console.error);
 
       function notify(status, id) {
+        /*
         console.log(id);
         if (! status) {
           if (!("Notification" in window)) {
@@ -420,6 +433,7 @@ function myMap() {
             });
           }
         }
+        */
       }
 
       //vehicle routes

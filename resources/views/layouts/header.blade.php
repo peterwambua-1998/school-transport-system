@@ -47,7 +47,7 @@
       <li class="nav-item dropdown">
         <?php
           $user = Auth::user();
-          $notifs = $user->unreadNotifications;
+          $notifs = $user->unreadNotifications->take(5);
         ?>
         <a class="nav-link dropdown-toggle" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <i data-feather="bell"></i>
