@@ -45,7 +45,7 @@
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>First Names</th>
+                                <th>First Name</th>
                                 <th>Last Name</th>
                                 <th>Reason</th>
                                 <th>Time</th>

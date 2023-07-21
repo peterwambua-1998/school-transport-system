@@ -53,11 +53,10 @@
 @push('plugin-scripts')
   <script src="{{ asset('assets/plugins/datatables-net/jquery.dataTables.js') }}"></script>
   <script src="{{ asset('assets/plugins/datatables-net-bs5/dataTables.bootstrap5.js') }}"></script>
-  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 @endpush
 @push('custom-scripts')
 <script src="{{ asset('assets/js/data-table.js') }}"></script>
-    <script defer>
+    <script>
         console.log('peter');
         $(document).ready( function () {
             $.ajax({

@@ -76,7 +76,7 @@
                                             <td>{{ $depatureChecklist->student->first_name }}</td>
                                             <td>{{ $depatureChecklist->student->last_name }}</td>
                                             <td>{{ $depatureChecklist->attendance }}</td>
-                                            <td>{{ $depatureChecklist->date }}</td>
+                                            <td>{{ date('d-M-Y', strtotime($depatureChecklist->date) ) }}</td>
                                             
                                         </tr>
                                         @endforeach
@@ -109,7 +109,7 @@
                                             <td>{{ $depatureChecklist->student->first_name }}</td>
                                             <td>{{ $depatureChecklist->student->last_name }}</td>
                                             <td>{{ $depatureChecklist->attendance }}</td>
-                                            <td>{{ $depatureChecklist->created_at }}</td>
+                                            <td>{{  date('d-M-Y', strtotime($depatureChecklist->created_at) ) }}</td>
                                             
                                         </tr>
                                         @endforeach
@@ -161,14 +161,10 @@
                         @endif
                         
                         <li class="list-group-item">
-                            <span class="text-muted mr-4">For: </span>
-                                @if ($schooltrip->grade == 'general')
-                                    All students
-                    
-                                @else
-                                Grade {{ $schooltrip->grade }}
-                    
-                                @endif
+                            <span class="text-muted mr-4">{{ucfirst($tr->plural) ?? 'Grades'}}: </span>
+                            @foreach ($grades as $grade)
+                                {{$grade->name}},
+                            @endforeach
                         </li>
                       </ul>
                 </div>

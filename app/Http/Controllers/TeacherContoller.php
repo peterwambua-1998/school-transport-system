@@ -79,11 +79,21 @@ class TeacherContoller extends Controller
         $depatureChecklists = DepatureChecklist::where('schooltrip_id', '=', $schooltrip->id)->get();
         
         $returnChecklists = ReturnChecklist::where('schooltrip_id', '=', $schooltrip->id)->get();
+
+        $schooltrip_grades = DB::table('school_trip_grades')->where('schooltrip_id','=', $schooltrip->id)->get();
+        $grades = new Collection();
+        if($schooltrip_grades->isNotEmpty()) {
+            foreach ($schooltrip_grades as $key => $schooltrip_grade) {
+                $grade = DB::table('student_classes')->where('id','=', $schooltrip_grade->grade_id)->first();
+                $grades->push($grade);
+            }
+        }
       
         return view('school_attendance.showtripdetails')->with([
             'schooltrip' => $schooltrip,
             'depatureChecklists' => $depatureChecklists,
-            'returnChecklists' => $returnChecklists
+            'returnChecklists' => $returnChecklists,
+            'grades'=> $grades
         ]);
     }
 
@@ -127,11 +137,8 @@ class TeacherContoller extends Controller
     public function pageToAddStdToScholTrip($id)
     {
         $schooltrip = SchoolTrip::find(Crypt::decrypt($id));
-
         $vehicles = DB::table('schooltrip_vehicle')->where('schooltrip_id','=', $schooltrip->id)->get();
-
         $students = new Collection();
-
         if ($schooltrip->status == "unpaid") {
             $grades = DB::table('school_trip_grades')->where('schooltrip_id','=', $schooltrip->id)->get();
             foreach ($grades as $key => $grade) {
@@ -142,21 +149,24 @@ class TeacherContoller extends Controller
             }
         }
 
-
-        if ($schooltrip->status == "paid" && $schooltrip->grade != "general") {
+        if ($schooltrip->status == "paid") {
             $paidStudents = SchoolTripPaymentTable::where('schooltrip_id','=',$schooltrip->id)->where('marked','=', 0)->get();
-            $students = Student::where('grade','=',$schooltrip->grade)->get();
+            $grades = DB::table('school_trip_grades')->where('schooltrip_id','=', $schooltrip->id)->get();
+            foreach ($grades as $key => $grade) {
+                $student = Student::where('grade','=', $grade->grade_id)->get();
+                foreach ($student as $key => $std) {
+                    $students->push($std);
+                }
+            }
             return view('school_attendance.paid-trip-std-list', compact('schooltrip','vehicles','paidStudents','students'));
         }
-
+        /*
         if ($schooltrip->status == "paid" && $schooltrip->grade == "general") {
             $paidStudents = SchoolTripPaymentTable::where('schooltrip_id','=',$schooltrip->id)->where('marked','=', 0)->get();
             $students = Student::all();
             return view('school_attendance.paid-trip-std-list', compact('schooltrip','vehicles','paidStudents','students'));
         }
-
-
-
+        */
         return view('school_attendance.unpaid-trip-std-list', compact('schooltrip','vehicles','students'));
     }
 
@@ -186,20 +196,15 @@ class TeacherContoller extends Controller
                         $depatureChecklists->attendance = 'absent';
                         $depatureChecklists->date = $date;
                         $depatureChecklists->save();
-
                         DB::table('school_trip_payment_tables')->where('student_id','=',$request->students[$i])->where('schooltrip_id','=', $trip->id)->update([
                             "marked" => 1
                         ]);
                     }
                 }
-                
             }
         });
 
-
         return redirect()->route('teachertrips_show', Crypt::encrypt($trip->id))->with('success','Students added to depature checklist');
-
-
         /*
         $trip_id = $request->trip_id;
 

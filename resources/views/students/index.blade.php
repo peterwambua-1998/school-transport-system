@@ -106,14 +106,14 @@
                                 @if ($student->image)
                                 <div class="test-gallery">
                                     <a href="{{ asset('store/'.$student->image) }}" data-pswp-width="600" data-pswp-height="600">
-                                        <img class="wd-80 ht-80 rounded-circle" src="{{ asset('store/'.$student->image) }}" alt="">
+                                        <img class="wd-80 ht-80 rounded-circle" src="{{ asset('store/'.$student->image) }}" alt="image" loading="lazy">
                                     </a> 
                                 </div>
                                 @else
                                     @if ($student->gender == "male")
-                                        <img class="wd-80 ht-80 rounded-circle" src="{{url('https://cdn-icons-png.flaticon.com/512/3135/3135755.png')}}" alt="staff">
+                                        <img class="wd-80 ht-80 rounded-circle" src="{{url('https://cdn-icons-png.flaticon.com/512/3135/3135755.png')}}" alt="image" loading="lazy">
                                     @else
-                                    <img class="wd-80 ht-80 rounded-circle" src="{{url('https://cdn-icons-png.flaticon.com/512/9676/9676572.png')}}" alt="staff">
+                                    <img class="wd-80 ht-80 rounded-circle" src="{{url('https://cdn-icons-png.flaticon.com/512/9676/9676572.png')}}" alt="staff" loading="lazy">
                                     @endif
                                 @endif
                             </td>

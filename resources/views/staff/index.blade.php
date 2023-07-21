@@ -415,8 +415,6 @@
                 language: { searchPlaceholder: "Search records", search: "",},
             });
 
-
-
             $('.save-stand-in-driver').each((i, e) => {
                 $(e).on('click',(ev) => {
                     ev.preventDefault();

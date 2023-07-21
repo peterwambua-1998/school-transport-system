@@ -484,8 +484,7 @@ Route::group(['middleware' => ['auth','is_disabled','settings', 'email_settings'
     Route::post('/schooltripst/students-remove', 'TeacherContoller@removeStudent')->name('schooltrip_remove_student');
     Route::post('/schooltrip-activate','SchoolTripController@activate')->name('activate_schooltrip');
     Route::resource('schooltrips', 'SchoolTripController');
-    Route::get('/attendances/list','AttendanceController@index')->name('attr_list');
-    Route::resource('attendances', 'AttendanceController')->except('index');
+
 
     
 
@@ -629,8 +628,11 @@ Route::group(['middleware' => ['settings','is_disabled','whatsapp_settings','ema
     Route::get('/notification/seenotify', 'StaffController@getNotification')->name('notification_get');
     Route::get('/notification/all', 'AllNotificationsController@index')->name('all_notications');
     Route::post('/schooltrips/approve/route', 'StaffController@approveRoute')->name('schooltrip_approve');
+    Route::get('/attendances/list','AttendanceController@index')->name('attr_list');
     Route::get('/attendances/absent-today', 'StaffController@adbsentToday')->name('absenttodaystd');
     Route::get('/delete_user_notifications','StaffController@markAll')->name('delete_user_notifications');
+    Route::resource('attendances', 'AttendanceController')->except('index');
+
     //vaildate email
     Route::post('/validate-email','StaffController@validateEmail');
     Route::post('/validate-stnum','StaffController@validateStaffNumber');

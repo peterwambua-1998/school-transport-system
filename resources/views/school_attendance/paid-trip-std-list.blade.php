@@ -52,6 +52,24 @@
     .delete-student:hover {
       cursor: pointer;
     }
+    .pagination .active .page {
+      background: #daa505;
+    }
+    .page {
+      background: #fbbc06;
+      color: #000;
+      padding-left: 10px;
+      padding-right: 10px;
+      padding-top: 5px;
+      padding-bottom: 5px;
+      border-radius: 0.375rem;
+      margin-left: 1px;
+      font-weight: 500;
+    }
+    .page:hover {
+      color: #000;
+      background: #daa505;
+    }
   </style>
   @endpush
 @section('content')
@@ -83,84 +101,102 @@
   <div class="col-md-12 grid-margin stretch-card">
     <div class="card">
       <div class="card-body">
-
+        <form action="{{route('teachertrips_addmystudents')}}" method="post" class="my-formsss">
+          @csrf
+          <input type="hidden" name="trip" value="{{$schooltrip->id}}">
         <div class="row">
           <div class="col-md-8">
             <h6 class="mb-3">Students List</h6>
             <hr>
-            <div class="student-list">
-              <ul>
-                <li class="list-heading">
-                  <span class="headers">Student</span>
-                  <span class="headers">Checkbox</span>
-                  <span class="headers">Vehicle</span>
-                  <span class="headers">Remove</span>
-                </li>
-                <form action="{{route('teachertrips_addmystudents')}}" method="post" id="my-form">
-                  @csrf
-                  <input type="hidden" name="trip" value="{{$schooltrip->id}}">
-                  @if($students->isNotEmpty())
-                    @foreach ($students as $student)
-                      <li style="disp">
-                        <div>
-                          <span class="std-name">{{ $student->first_name }} {{$student->last_name }}</span>
-                        </div>
-                        <div class="form-check">
-                          @php 
-                          $marked = '';
-                          $depature = App\Models\DepatureChecklist::where('schooltrip_id','=', $schooltrip->id)->where('student_id','=',$student->id)->first() ?? null; 
-                          if ($depature) {
-                            $marked = true;
+              <div class="table-responsive">
+                <table class="table table-bordered table-striped" id="dataTableExample">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Student</th>
+                            <th>Checkbox</th>
+                            <th>Bus</th>
+                            <th>Remove</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                      <?php $number = 1; ?>
+                      
+                       
+                        @if($students->isNotEmpty())
+                          @foreach ($students as $student)
+                            <tr>
+                              <td>{{$number}} <?php $number++; ?></td>
+                              <td>{{ $student->first_name }} {{$student->last_name }}</td>
+                              <td>
+                                @php 
+                                  $marked = '';
+                                  $depature = App\Models\DepatureChecklist::where('schooltrip_id','=', $schooltrip->id)->where('student_id','=',$student->id)->first() ?? null; 
+                                  if ($depature) {
+                                    $marked = true;
 
-                          }
-                          @endphp
-                          <input class="form-check-input checkbox" name="students[]" @if($marked) checked  @endif type="checkbox" value="{{$student->id}}">
-                        </div>
-                        <div>
-                          <select class="form-select" name="vehicle[]">
-                            <option>select...</option>
-                            @foreach ($vehicles as $vehicle)
-                            <?php $veh = App\Models\Vehicle::where('id','=', $vehicle->vehicle_id)->first(); ?>
-                            @if ($depature)
-                            <option @if ($depature->vehicle_id == $veh->id) selected @endif value="{{$veh->id}}">{{$veh->title}}</option>
-                            @else
-                            <option value="{{$veh->id}}">{{$veh->title}}</option>
-                            @endif
-                            @endforeach
-                            
-                          </select>
-                        </div>
-                        <div>
-                                
-                          <div>
-                            <input type="hidden"  class="student_id" value="{{$student->id}}">
-                            <input type="hidden" class="trip_id" value="{{$schooltrip->id}}">
-                            <i class="fa-solid fa-trash-can delete-student text-danger"></i>
-                          </div>
-                          
-                        </div>
-                      </li>
-                    @endforeach
-                  @else
-                      <div class="text-center mt-3 mb-3">
-                        <h6 class="card-title">Add Students</h6>
-                      </div>
-                  @endif
-                </form>
-              </ul>
-            </div>
+                                  }
+                                @endphp
+                                <input class="form-check-input checkbox" name="students[]" @if($marked) checked  @endif type="checkbox" value="{{$student->id}}">
+                              </td>
+                              <td>
+                                <select class="form-select" name="vehicle[]">
+                                  <option>select...</option>
+                                  @foreach ($vehicles as $vehicle)
+                                  <?php $veh = App\Models\Vehicle::where('id','=', $vehicle->vehicle_id)->first(); ?>
+                                  @if ($depature)
+                                  <option @if ($depature->vehicle_id == $veh->id) selected @endif value="{{$veh->id}}">{{$veh->title}}</option>
+                                  @else
+                                  <option value="{{$veh->id}}">{{$veh->title}}</option>
+                                  @endif
+                                  @endforeach
+                                  
+                                </select>
+                              </td>
+                              <td>
+                                <div>
+                                  <input type="hidden"  class="student_id" value="{{$student->id}}">
+                                  <input type="hidden" class="trip_id" value="{{$schooltrip->id}}">
+                                  <i class="fa-solid fa-trash-can delete-student text-danger"></i>
+                                </div>
+                              </td>
+                            </tr>
+                          @endforeach
+                        @endif
+                    </tbody>
+                </table>
+              </div>
           </div>
 
           <div class="col-md-4">
             <h6 class="mb-3">Paid students list</h6>
-            <ul class="list-group">
-              @foreach ($paidStudents as $stds)
-                <?php $std = App\Models\Student::where('id','=', $stds->student_id)->first(); ?>
-                <li class="list-group-item">{{ $std->first_name }} {{$std->last_name }}</li>
-              @endforeach
-            </ul>
+            <hr>
+            <div id="test-list">
+              <div class="input-group mb-2">
+                <input class="form-control search" type="text" placeholder="Search notification...">
+                <button class="btn btn-light btn-icon" type="button" id="button-search-addon"><i data-feather="search"></i></button>
+              </div>
+              <ul class="list-group mb-2 list">
+                @foreach ($paidStudents as $stds)
+                  <?php $std = App\Models\Student::where('id','=', $stds->student_id)->first(); ?>
+                  <li class="list-group-item">
+                    <p class="names">{{ $std->first_name }} {{$std->last_name }}</p>
+                  </li>
+                @endforeach
+              </ul>
+              <div>
+                <div class="d-flex align-items-center justify-content-end flex-grow-1">
+                  <span class="me-2"></span>
+                  <div class="btn-group">
+                    <ul class="pagination"></ul>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+      </form>
+
       </div>
     </div>
   </div>
@@ -168,11 +204,24 @@
 
 @endsection
 
+@push('plugin-scripts')
+  <script src="{{ asset('assets/plugins/datatables-net/jquery.dataTables.js') }}"></script>
+  <script src="{{ asset('assets/plugins/datatables-net-bs5/dataTables.bootstrap5.js') }}"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
+@endpush
+
 @push('custom-scripts')
+<script src="{{ asset('assets/js/data-table.js') }}"></script>
     <script defer>
       $(function() {
+        var monkeyList = new List('test-list', {
+          valueNames: ['names'],
+          page: 10,
+          pagination: true
+        });
         $('#save').on('click', () => {
-          $('#my-form').submit();
+          console.log($('.my-formsss'));
+          $('.my-formsss').submit();
         })
 
         $('.delete-student').each((i, e) => {
@@ -205,6 +254,8 @@
           
           })
         });
+
+        
       });
     </script>
 @endpush
