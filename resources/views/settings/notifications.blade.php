@@ -142,6 +142,12 @@
                               <td><input required type="number" name="inspection_send_at_two" class="form-control inputs"  placeholder="0" value="{{$notificationSetting->inspection_send_at_two ?? ''}}"><p class="issues"></p></td>
                               <td><input required type="text" name="inspection_unit" class="form-control inputs"  placeholder="Years" value="{{$notificationSetting->inspection_unit ?? ''}}"><p class="issues"></p></td>
                           </tr>
+                          <tr>
+                            <td>Pick-up and Drop-off (Meters)</td>
+                            <td><input required type="number" name="pickup_value" class="form-control inputs"  placeholder="0" value="{{$notificationSetting->value ?? ''}}"><p class="issues"></p></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
                       </tbody>
                   </table>
               </div>

@@ -244,7 +244,7 @@ class ZoneController extends Controller
 
     public function zones()
     {
-        $zones = Zone::all();
+        $zones = Zone::where('status','=', 1)->get();
 
         $final_array = [];
 

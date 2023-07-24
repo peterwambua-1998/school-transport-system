@@ -13,6 +13,7 @@ use App\Models\FlagOff;
 use App\Models\Incident;
 use App\Models\IncidentImages;
 use App\Models\Inspection;
+use App\Models\NotificationSetting;
 use App\Models\PickupPoint;
 use App\Models\PickupPointStudent;
 use App\Models\ReturnChecklist;
@@ -257,7 +258,7 @@ class LoginController extends Controller
     {
         $user = auth('api')->user();
 
-        $vehicle = Vehicle::where('driver_id', '=', $user->id)->first() ?? abort(404,'not found');
+        $vehicle = Vehicle::where('driver_id', '=', $user->id)->first() ?? abort(404, 'not found');
 
         //driver stand-in
         if ($user->user_type == "driver") {
@@ -301,8 +302,15 @@ class LoginController extends Controller
     {
         $user = auth('api')->user();
 
+        $notificationSetting = NotificationSetting::find(1);
+
+        if (!$notificationSetting) {
+            return response("not assigned vehicle");
+        }
+
         $vehicle = Vehicle::where('driver_id', '=', $user->id)->first() ?? Vehicle::where('attendant_id', '=', $user->id)->first();
 
+        
         //driver stand-in
         if ($user->user_type == "driver") {
             $check_stand_in_driver = StandinDriver::where('stand_in_driver','=', $user->id)->where('status','=', 1)->first();
@@ -319,6 +327,7 @@ class LoginController extends Controller
             }
         }
 
+        $vehicle->pickup_notification_distance = $notificationSetting->value;
 
         if (! $vehicle) {
             return abort(404,'Vehicle not found or allocated');
@@ -327,8 +336,8 @@ class LoginController extends Controller
         return response(['vehicle' => $vehicle]);
     }
 
-
-    public function getParent($id) {
+    public function getParent($id) 
+    {
         $student = Student::find($id);
 
         if (! $student) {

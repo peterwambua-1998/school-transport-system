@@ -28,6 +28,10 @@ return new class extends Migration
             $table->string('license_unit')->nullable();
             $table->string('inspection_unit')->nullable();
 
+            //for pick-up and drop-off notification
+            $table->string('value')->nullable();
+            $table->string('unit_of_measure')->nullable();
+
             $table->timestamps();
         });
     }

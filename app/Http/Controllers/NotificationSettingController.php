@@ -51,6 +51,7 @@ class NotificationSettingController extends Controller
             $notificationSettings->insurance_unit = $request->insurance_unit;
             $notificationSettings->license_unit = $request->license_unit;
             $notificationSettings->inspection_unit = $request->inspection_unit;
+            $notificationSettings->value = $request->pickup_value;
             if($notificationSettings->save()){
                 return redirect()->back()->with('success', 'Record stored successfully.');
             }
@@ -66,6 +67,7 @@ class NotificationSettingController extends Controller
             $notificationSetting->insurance_unit = $request->insurance_unit;
             $notificationSetting->license_unit = $request->license_unit;
             $notificationSetting->inspection_unit = $request->inspection_unit;
+            $notificationSetting->value = $request->pickup_value;
             if($notificationSetting->update()){
                 return redirect()->back()->with('success', 'Record updated successfully.');
             }
