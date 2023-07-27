@@ -343,13 +343,10 @@ function myMap() {
 
       geofenceObject.push(geofenceObj);
     
-
       channel.bind('App\\Events\\VehicleLocation', function(data) {
-          console.log(data);
-
+          $('.speed').text(Math.round(((data.speed - 0) * 1.60934)) + ' Km/h');
+          $('.head').text(convertDegreesToCompass(data.head));
           var veh_id = data.vehicle_id;
-
-
           for (let t = 0; t < makersObject.length; t++) {
             console.log( Object.keys(makersObject[t])[0]);
             

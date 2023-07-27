@@ -101,13 +101,20 @@ class LoginController extends Controller
         } else {
             return abort(401);
         }
-
-
     }
 
     public function getUser()
     {
         $user = auth('api')->user();
+        if ($user->image) {
+            $user->avatar = asset('store/'.$user->image);
+        } else {
+            if ($user->gender == 'male') {
+                $user->avatar = 'https://cdn-icons-png.flaticon.com/512/9875/9875255.png';
+            } else {
+                $user->avatar = 'https://cdn-icons-png.flaticon.com/512/9875/9875392.png';
+            }
+        }
        
         return response(['user' => $user]);
     }
@@ -328,11 +335,10 @@ class LoginController extends Controller
         }
 
         $vehicle->pickup_notification_distance = $notificationSetting->value;
-
+        $vehicle->distance_interval = 0;
         if (! $vehicle) {
             return abort(404,'Vehicle not found or allocated');
         }
-        
         return response(['vehicle' => $vehicle]);
     }
 
@@ -441,7 +447,9 @@ class LoginController extends Controller
         $obj->longitude = $request->longitude;
         $obj->is_mocked = true;
 
-        event(new VehicleLocation($request->latitude, $request->longitude, $vehicle->id, $request->speed, $request->head));
+        Log::error($request);
+
+        event(new VehicleLocation((string)$request->latitude, (string)$request->longitude, (string)$vehicle->id, (string)$request->speed, (string)$request->head));
         
         if($vehicle->update()) {
             return response(['msg' => 'updated']);
