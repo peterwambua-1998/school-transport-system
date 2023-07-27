@@ -439,6 +439,7 @@ class LoginController extends Controller
         $vehicle->longitude = $request->longitude;
         $vehicle->head = $request->head;
         $vehicle->speed = $request->speed;
+        $vehicle->update();
 
         $obj = new stdClass;
         $obj->heading = $request->head;

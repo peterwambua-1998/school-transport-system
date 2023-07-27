@@ -204,7 +204,7 @@ $.ajax({
       $('.vhl-plate').text(response[0].plate_num);
       $('#driver').text(response[1].name);
       $('#driver-number').text(response[1].phone_num);
-      $('.speed').text(Math.round(((response[0].speed - 0) * 1.60934)) + ' Km/h');
+      $('.speed').text(Math.round(((response[0].speed - 0) * 3.6)) + ' Km/h');
       let img;
       if (response[1].image) {
          img = `
@@ -255,7 +255,7 @@ function myMap() {
           encrypted: true
       });
 
-      var channel = pusher.subscribe('notifications-schoolapp.'+'{{$vehicle}}');
+      var channel = pusher.subscribe('notifications-schoolap.'+'{{$vehicle}}');
 
       
 
@@ -344,7 +344,7 @@ function myMap() {
       geofenceObject.push(geofenceObj);
     
       channel.bind('App\\Events\\VehicleLocation', function(data) {
-          $('.speed').text(Math.round(((data.speed - 0) * 1.60934)) + ' Km/h');
+          $('.speed').text(Math.round(((data.speed - 0) * 3.6)) + ' Km/h');
           $('.head').text(convertDegreesToCompass(data.head));
           var veh_id = data.vehicle_id;
           for (let t = 0; t < makersObject.length; t++) {
